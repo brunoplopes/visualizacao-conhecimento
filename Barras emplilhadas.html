@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>d3.js learning</title>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <style type="text/css">
         svg {
             font: 10px sans-serif;
@@ -152,6 +152,23 @@
                 case 3: return "Google";
             }
         });
+
+    svg.append("g")
+            .append("text")
+            .attr("fill", "#000")
+            // .attr("transform", "rotate(-90)")
+            .attr("x", 60)
+            .attr("dy", "-1em")
+            .attr("text-anchor", "end")
+            .text("Quantidade acesso");
+
+    svg.append("g")
+            .append("text")
+            .attr("fill", "#000")
+            .attr("x", 800)
+            .attr("dy", "47em")
+            .attr("text-anchor", "end")
+            .text("Dia");
 
     // Prep the tooltip bits, initial display is hidden
     var tooltip = svg.append("g")
