@@ -1,0 +1,112 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<h1>Candidatos por estado</h1>
+<style>
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 150px;
+        height: 25px;
+        padding: 2px;
+        font-size: 10px;
+        background: #FFFFE0;
+        border: 1px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+</style>
+<!-- Load d3.js -->
+<script src="http://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+<!-- Create an element where the map will take place -->
+<svg id="my_dataviz" width="900" height="400"></svg>
+
+<script>
+
+// The svg
+var svg = d3.select("svg"),
+  width = +svg.attr("width"),
+  height = +svg.attr("height");
+
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+// Map and projection
+var path = d3.geoPath();
+var projection = d3.geoMercator()
+  .scale(450)
+  .center([-80,-18])
+  .translate([width / 2, height / 2]);
+
+// Data and color scale
+var data = d3.map();
+ext_color_domain = [10, 100, 1000, 10000, 100000, 1000000];
+var colorScale = d3.scaleThreshold()
+  .domain(ext_color_domain)
+  .range(d3.schemeBlues[9]);
+
+// Load external data and boot
+d3.queue()
+  .defer(d3.json, "dataset/estados.json")
+  .defer(d3.csv, "dataset/candidadto_estado.csv", function(d) { data.set(d.estado, +d.count); })
+  .await(ready);
+
+function ready(error, topo) {
+
+  // Draw the map
+  svg.append("g")
+    .selectAll("path")
+    .data(topo.features)
+    .enter()
+    .append("path")
+      // draw each country
+      .attr("d", d3.geoPath()
+        .projection(projection)
+      )
+      .on("mouseover", function(d) {
+          d3.select(this).transition().duration(300).style("opacity", 1);
+          div.transition().duration(300)
+              .style("opacity", 1)
+          div.text(d.properties.sigla + " : " + data.get(d.properties.sigla) )
+              .style("left", (d3.event.pageX) + "px")
+              .style("top", (d3.event.pageY -30) + "px");
+      })
+      .on("mouseout", function() {
+          d3.select(this)
+              .transition().duration(300)
+              .style("opacity", 0.8);
+          div.transition().duration(300)
+              .style("opacity", 0);
+      })
+      // set the color of each country
+      .attr("fill", function (d) {
+        d.total = data.get(d.properties.sigla) || 0;
+        return colorScale(d.total );
+      });
+    }
+
+var legend = svg.selectAll("g.legend")
+    .data(ext_color_domain)
+    .enter().append("g")
+    .attr("class", "legend");
+
+var ls_w = 20, ls_h = 20;
+
+legend.append("rect")
+    .attr("x", 20)
+    .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+    .attr("width", ls_w)
+    .attr("height", ls_h)
+    .style("fill", function(d, i) { return colorScale(d); })
+    .style("opacity", 0.8);
+
+legend.append("text")
+    .attr("x", 50)
+    .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+    .text(function(d, i){ return ext_color_domain[i]; });
+
+</script>
