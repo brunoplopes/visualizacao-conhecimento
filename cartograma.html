@@ -1,0 +1,110 @@
+<head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.5/dat.gui.js"></script>
+    <script src="//unpkg.com/cartogram-chart@1"></script>
+    <script src="//unpkg.com/d3-scale-chromatic"></script>
+
+    <style>body { margin: 0; }</style>
+</head>
+
+<body>
+<h3 style="margin-left: 420px;">Brasil - Admitidos e desligados 2017</h3>
+<svg id="world" width="1280" height="500"></svg>
+
+<script>
+    // Controls
+    const gui = new dat.GUI();
+
+    var projection = d3.geoMercator()
+        .scale(600)
+        .center([-80,-18])
+        .translate([900 / 2, 500 / 2]);
+
+    // const colorScale = d3.scaleSequential(d3.interpolateYlOrBr);
+
+    const cartogram = Cartogram()
+        .valFormatter(n => n.toPrecision(3))
+        (document.getElementById('world'));
+
+    var dataAdmitidos = d3.map();
+    var dataDesligados = d3.map();
+
+    ext_color_domain = [10, 100, 1000, 10000, 100000, 500000];
+    var colorScale = d3.scaleThreshold()
+        .domain(ext_color_domain)
+        .range(d3.schemeBlues[7]);
+
+    d3.csv("dataset/candidadto_estado.csv", function (d) {
+        d.forEach(x =>{
+            dataAdmitidos.set(x.estado, x.admitidos);
+            dataDesligados.set(x.estado, x.desligados);
+        });
+    });
+
+
+    d3.json('dataset/topojson_brasil_uf.json', (error, world) => {
+        if (error) throw error;
+
+        let ccData;
+
+        cartogram
+            .topoJson(world)
+            .topoObjectName('uf')
+            .projection(projection)
+            .value(({ id }) => parseInt(dataAdmitidos.get(id)))
+            .color(({ id }) => colorScale(parseInt(dataDesligados.get(id))))
+            .label(({ id, properties: p }) => `${p.name} (${parseInt(dataAdmitidos.get(id))}) - (${parseInt(dataDesligados.get(id))})`)
+            .onClick(d => console.info(d));
+
+        const controls = { 'Iterations': 4, 'Randomize': () => { genVals(); render(); }};
+        gui.add(controls, 'Iterations', 1, 15).step(1).onChange(render);
+        gui.add(controls, 'Randomize');
+
+        genVals();
+        render();
+
+        //
+
+        function genVals() {
+            ccData = Object.assign(...world.objects.uf.geometries
+                .map(({ id }) => ({ [id]: Math.random() }))
+            );
+        }
+
+        function render() {
+            cartogram.iterations(controls.Iterations);
+        }
+    });
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+    var legend = svg.selectAll("g.legend")
+        .data(ext_color_domain)
+        .enter().append("g")
+        .attr("class", "legend");
+
+    var ls_w = 40, ls_h = 40;
+
+    legend.append("rect")
+        .attr("x", 20)
+        .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+        .attr("width", ls_w)
+        .attr("height", ls_h)
+        .style("fill", function(d, i) { return colorScale(d); })
+        .style("opacity", 0.8);
+
+    legend.append("text")
+        .attr("x", 60)
+        .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+        .text(function(d, i){ return ext_color_domain[i]; });
+
+    var myText =  svg.append("text")
+        .attr("x", 50)//magic number here
+        .attr("y", 200)
+        .attr('text-anchor', 'middle')
+        .attr("class", "myLabel")//easy to style with CSS
+        .text("Demitidos");
+
+</script>
+</body>
