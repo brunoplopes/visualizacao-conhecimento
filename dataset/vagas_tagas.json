@@ -1,0 +1,168 @@
+{
+  "name":"Skills",
+  "children":
+  [
+    {
+      "name":"Web",
+      "children":
+      [
+        {
+          "name": "Front end",
+          "children":
+          [
+            {
+              "name":  "HTML",
+              "total": 10
+            },
+            {
+              "name":  "CSS",
+              "total":80
+            },
+            {
+              "name":  "LESS",
+              "total":10
+            },
+            {
+              "name":  "Responsive",
+              "total": 20
+            },
+            {
+              "name":  "jQuery",
+              "total": 30
+            },
+            {
+              "name":  "Angular",
+              "total": 70
+            },
+            {
+              "name":  "React",
+              "total": 40
+            }
+          ]
+        },
+        {
+          "name": "Server Side",
+          "children":
+          [
+            {
+              "name":  "ASP.Net",
+              "total":  90
+            },
+            {
+              "name": "Entity-Framework",
+              "total": 13
+            },
+            {
+              "name": "Node.js",
+              "total": 16
+            },
+            {
+              "name": "SqlServer",
+              "total": 20
+            },
+            {
+              "name": "Sqlite",
+              "total": 10
+            },
+            {
+              "name": "Mongo",
+              "total": 40
+            },
+            {
+              "name": "IIS",
+              "total": 30
+            },
+            {
+              "name": "Apache",
+              "total": 60
+            },
+            {
+              "name": "OAuth2.0",
+              "total": 10
+            },
+            {
+              "name": "Java",
+              "total": 188
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"Linguagem",
+      "children":
+      [
+        {
+          "name": "Dotnet",
+          "total": 130
+        },
+        {
+          "name": "Javascript",
+          "total": 180
+        },
+        {
+          "name": "VBScript",
+          "total": 10
+        },
+        {
+          "name": "Python",
+          "total":11
+        },
+        {
+          "name": "Java",
+          "total": 188
+        },
+        {
+          "name": "SQL",
+          "total": 80
+        },
+        {
+          "name": "VB",
+          "total": 50
+        },
+        {
+          "name": "Pascal",
+          "total": 5
+        }
+      ]
+    },
+    {
+      "name":"Outros",
+      "children":
+      [
+        {
+          "name":"Cloud",
+          "children":
+          [
+            {
+              "name": "IaaS",
+              "total": 15
+            },
+            {
+              "name": "PaaS",
+              "total": 30
+            },
+            {
+              "name": "SaaS",
+              "total": 10
+            }
+          ]
+        },
+        {
+          "name":"Test",
+          "children":
+          [
+            {
+              "name": "TDD",
+              "total": 5
+            },
+            {
+              "name": "Cucumber",
+              "total": 10
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
